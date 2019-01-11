@@ -97,7 +97,7 @@ public class Count_Min {
 		        // Doing "%" after (int) conversion is ~2x faster than %'ing longs.
 		        return ((int) hash) % width;
 		    }
-		    
+		    			
 		    public void add(long item, long count) {
 		        if (count < 0) {
 		            throw new IllegalArgumentException("Negative increments not implemented");

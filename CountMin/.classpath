@@ -2,5 +2,9 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Users/igkouzionis/Documents/GitHub/CountMinFlink/Libraries/flink-dist_2.11-1.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/igkouzionis/Documents/GitHub/CountMinFlink/Libraries/flink-python_2.11-1.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/igkouzionis/Documents/GitHub/CountMinFlink/Libraries/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="C:/Users/igkouzionis/Documents/GitHub/CountMinFlink/Libraries/slf4j-log4j12-1.7.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
