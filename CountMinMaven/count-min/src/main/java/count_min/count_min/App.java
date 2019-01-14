@@ -1,12 +1,18 @@
 package count_min.count_min;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.core.fs.FileSystem;
+import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
 
+import java.io.*;
 
 
 /**
@@ -20,57 +26,87 @@ public class App
     	final ParameterTool params= ParameterTool.fromArgs(args);
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		env.getConfig().setGlobalJobParameters(params);
-		
-		//DataStream<String> stream = env.readTextFile("data.txt");
-		
-		DataStream<String> text = null;
-		if(params.has("input")) {
-			text = env.readTextFile(params.get("input"));
-		} else {
-			System.out.println("Use default dataset");
-		}
+
+
+		/*final int maxEventDelay = 60;       // events are out of order by max 60 seconds
+		final int servingSpeedFactor = 600; // events of 10 minutes are served every second */
+
+		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+		DataStream<String> text = env.readTextFile(params.get("input","/home/dimitra/dataBig.txt"));
 		
 		DataStream<Tuple2<String, Integer>> counts =
 				// split up the lines in pairs (2-tuples) containing: (word,1)
 				text.flatMap(new Tokenizer())
 				// group by the tuple field "0" and sum up tuple field "1"
-				.keyBy(0); // keyBy(0).sum(1);
+				.keyBy(0); //.sum(1);
 				
 			// emit result
-			if (params.has("output")) {
-				counts.writeAsText(params.get("output"));
-			} else {
-				System.out.println("Printing result to stdout. Use --output to specify output path.");
-				counts.print();
-			}
-			
-			
+				counts.writeAsText(params.get("output","/home/dimitra/input.txt"), FileSystem.WriteMode.OVERWRITE).setParallelism(1);
 
-			// execute program
-			env.execute("Streaming Count_Min");
+
+			Count_Min sketch = new Count_Min(100,100,30);   //experimentally
+
+		try {
+			File file = new File("/home/dimitra/input.txt");
+
+			BufferedReader br = new BufferedReader(new FileReader(file));
+	        String str;
+	        int arg1, arg2;
+	        while ((str = br.readLine()) != null) {
+				String replaced = str.replaceAll("[()]", "");
+	            String[] ar = replaced.split(",");
+	            arg1 = Integer.parseInt(ar[0].trim());
+	            arg2 = Integer.parseInt(ar[1].trim());
+
+	            sketch.add(arg1,arg2);
+
+	        }
+	    } catch (IOException e) {
+	        System.out.println("File Read Error");
+	    }
+
+
+        File file1 = new File("/home/dimitra/queries.txt");
+        String str1;
+        int arg3;
+        long est;
+        BufferedReader br1 = new BufferedReader(new FileReader(file1));
+        File statText = new File("/home/dimitra/estimations.txt");
+        FileOutputStream is = new FileOutputStream(statText);
+        OutputStreamWriter osw = new OutputStreamWriter(is);
+        Writer w = new BufferedWriter(osw);
+
+        while ((str1 = br1.readLine()) != null) {
+            String[] ar1 = str1.split("\n");
+            arg3 = Integer.parseInt(ar1[0]);
+
+            est= sketch.estimateCount(arg3);
+            String strLong = Long.toString(est);
+            //System.out.println("str long is " + strLong);
+            w.write("This is the estimation of "+arg3 + ": " + strLong + "\n");
+
+        }
+        w.close();
+
+
+        // execute program
+        env.execute("Streaming Count_Min");
 	}
-	
-	
-			
-	/**
-	 * Implements the string tokenizer that splits sentences into words as a
-	 * user-defined FlatMapFunction. The function takes a line (String) and
-	 * splits it into multiple pairs in the form of "(word,1)" ({@code Tuple2<String,
-	 * Integer>}).
-	 */
-	public static final class Tokenizer implements FlatMapFunction<String, Tuple2<String, Integer>> {
 
-		public void flatMap(String value, Collector<Tuple2<String, Integer>> out) {
-			// normalize and split the line
-			String[] tokens = value.toLowerCase().split("\n");
+    public static final class Tokenizer implements FlatMapFunction<String, Tuple2<String, Integer>> {
 
-			// emit the pairs
-			for (String token : tokens) {
-				if (token.length() > 0) {
-					out.collect(new Tuple2<String, Integer>(token, 1));
-				}
-			}
-		}
-	}
+        public void flatMap(String value, Collector<Tuple2<String, Integer>> out) {
+            // normalize and split the line
+            String[] tokens = value.toLowerCase().split("\n");
+
+            // emit the pairs
+            for (String token : tokens) {
+                if (token.length() > 0) {
+                    out.collect(new Tuple2<String, Integer>(token, 1));
+                }
+            }
+        }
+    }
+
 }
 

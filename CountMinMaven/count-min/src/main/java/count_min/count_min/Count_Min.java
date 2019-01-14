@@ -118,8 +118,10 @@ public class Count_Min {
 		     */
 		    public long estimateCount(long item) {
 		        long res = Long.MAX_VALUE;
+		       // System.out.println("This is res " + res );
 		        for (int i = 0; i < depth; ++i) {
 		            res = Math.min(res, countArray[i][hash(item, i)]);
+					//System.out.println("this is countarray: " + countArray[i][hash(item, i)]);
 		        }
 		        return res;
 		    }
