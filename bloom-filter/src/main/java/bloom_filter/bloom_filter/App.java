@@ -35,7 +35,7 @@ public class App {
         env.getConfig().setGlobalJobParameters(params);
         
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
-		DataStream<String> text = env.readTextFile(params.get("input","C:/Users/igkouzionis/Documents/GitHub/CountMinFlink/TxtFiles/datatest.txt"));
+		DataStream<String> text = env.readTextFile(params.get("input","C:/Users/igkouzionis/Documents/GitHub/CountMinFlink/TxtFiles/datatest.txt")).setParallelism(1);
 		Iterator<String> myOutput = DataStreamUtils.collect(text);
 		
 		// create list
