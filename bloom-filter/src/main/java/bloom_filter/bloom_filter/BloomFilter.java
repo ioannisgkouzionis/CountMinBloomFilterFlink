@@ -352,38 +352,38 @@ public class BloomFilter<E> implements Serializable {
      * @param c elements to check.
      * @return true if all the elements in c could have been inserted into the Bloom filter.
      */
-    public boolean containsAll(Collection<? extends E> c) {
-        for (E element : c)
-            if (!contains(element))
-                return false;
-        return true;
-    }
+//    public boolean containsAll(Collection<? extends E> c) {
+//        for (E element : c)
+//            if (!contains(element))
+//                return false;
+//        return true;
+//    }
 
     /**
      * Read a single bit from the Bloom filter.
      * @param bit the bit to read.
      * @return true if the bit is set, false if it is not.
      */
-    public boolean getBit(int bit) {
-        return bitset.get(bit);
-    }
+//    public boolean getBit(int bit) {
+//        return bitset.get(bit);
+//    }
 
     /**
      * Set a single bit in the Bloom filter.
      * @param bit is the bit to set.
      * @param value If true, the bit is set. If false, the bit is cleared.
      */
-    public void setBit(int bit, boolean value) {
-        bitset.set(bit, value);
-    }
+//    public void setBit(int bit, boolean value) {
+//        bitset.set(bit, value);
+//    }
 
     /**
      * Return the bit set used to store the Bloom filter.
      * @return bit set representing the Bloom filter.
      */
-    public BitSet getBitSet() {
-        return bitset;
-    }
+//    public BitSet getBitSet() {
+//        return bitset;
+//    }
 
     /**
      * Returns the number of bits in the Bloom filter. Use count() to retrieve
@@ -391,9 +391,9 @@ public class BloomFilter<E> implements Serializable {
      *
      * @return the size of the bitset used by the Bloom filter.
      */
-    public int size() {
-        return this.bitSetSize;
-    }
+//    public int size() {
+//        return this.bitSetSize;
+//    }
 
     /**
      * Returns the number of elements added to the Bloom filter after it
@@ -401,9 +401,9 @@ public class BloomFilter<E> implements Serializable {
      *
      * @return number of elements added to the Bloom filter.
      */
-    public int count() {
-        return this.numberOfAddedElements;
-    }
+//    public int count() {
+//        return this.numberOfAddedElements;
+//    }
 
     /**
      * Returns the expected number of elements to be inserted into the filter.
@@ -411,9 +411,9 @@ public class BloomFilter<E> implements Serializable {
      *
      * @return expected number of elements.
      */
-    public int getExpectedNumberOfElements() {
-        return expectedNumberOfFilterElements;
-    }
+//    public int getExpectedNumberOfElements() {
+//        return expectedNumberOfFilterElements;
+//    }
 
     /**
      * Get expected number of bits per element when the Bloom filter is full. This value is set by the constructor
@@ -421,9 +421,9 @@ public class BloomFilter<E> implements Serializable {
      *
      * @return expected number of bits per element.
      */
-    public double getExpectedBitsPerElement() {
-        return this.bitsPerElement;
-    }
+//    public double getExpectedBitsPerElement() {
+//        return this.bitsPerElement;
+//    }
 
     /**
      * Get actual number of bits per element based on the number of elements that have currently been inserted and the length
@@ -431,7 +431,7 @@ public class BloomFilter<E> implements Serializable {
      *
      * @return number of bits per element.
      */
-    public double getBitsPerElement() {
-        return this.bitSetSize / (double)numberOfAddedElements;
-    }
+//    public double getBitsPerElement() {
+//        return this.bitSetSize / (double)numberOfAddedElements;
+//    }
 }
