@@ -80,7 +80,7 @@ public class App
         }
         else {
             DataStream<Tuple1<String>> inputData = env.readTextFile("DataBF.txt").map(new BFMapFunction());
-            DataStream<Tuple2<String, Boolean>> inputQueries =env.readTextFile("Queries.txt").map(new BFQMapFunction()).keyBy(0);
+            DataStream<Tuple2<String, Boolean>> inputQueries =env.readTextFile("BFErrorQueries.txt").map(new BFQMapFunction()).keyBy(0);
             inputQueries.writeAsText("BFoutput.txt", FileSystem.WriteMode.OVERWRITE);
 
         }
