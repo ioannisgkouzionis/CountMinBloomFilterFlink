@@ -70,18 +70,33 @@ public class App
 
         if(num==1){
             DataStream<String> inputData = env.readTextFile("DataCM.txt");
+
+            //            Read from HDFS
+            // read text file from a HDFS running at nnHost:nnPort
+            // DataSet<String> hdfsLines = env.readTextFile("hdfs://nnHost:nnPort/path/to/my/textfile");
+            //DataStream<String> inputDataHDFS = env.readTextFile("");
+
             DataStream<Tuple2<Integer, Integer>> data = inputData.map(new CMmapFunction()).keyBy(0).sum(1);
 
             DataStream<String> inputQueries = env.readTextFile("Queries.txt");
 
             DataStream<Tuple2<Integer, Integer>> queries = inputQueries.map(new CMQmapFunction()).keyBy(0);
             queries.writeAsText("CMoutput.txt", FileSystem.WriteMode.OVERWRITE);
+            //        Write on HDFS
+            // write DataSet to a file on a HDFS with a namenode running at nnHost:nnPort
+            // textData.writeAsText("hdfs://nnHost:nnPort/my/result/on/localFS");
+            queries.writeAsText("");
             queries.print();
         }
         else {
             DataStream<Tuple1<String>> inputData = env.readTextFile("DataBF.txt").map(new BFMapFunction());
             DataStream<Tuple2<String, Boolean>> inputQueries =env.readTextFile("BFErrorQueries.txt").map(new BFQMapFunction()).keyBy(0);
             inputQueries.writeAsText("BFoutput.txt", FileSystem.WriteMode.OVERWRITE);
+
+            //        Write on HDFS
+            // write DataSet to a file on a HDFS with a namenode running at nnHost:nnPort
+            // textData.writeAsText("hdfs://nnHost:nnPort/my/result/on/localFS");
+            inputQueries.writeAsText("");
 
         }
 
