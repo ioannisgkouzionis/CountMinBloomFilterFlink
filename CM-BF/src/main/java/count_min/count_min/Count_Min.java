@@ -1,12 +1,9 @@
 package count_min.count_min;
 
-
-import org.joda.time.DateTime;
 import java.util.Arrays;
 import java.util.Random;
-import java.io.Serializable;
 
-public class Count_Min implements Comparable<Count_Min>, Serializable {
+public class Count_Min {
 
 
 	private final long PRIME_MODULUS = (1L << 31) - 1;
@@ -16,12 +13,6 @@ public class Count_Min implements Comparable<Count_Min>, Serializable {
 	private long[][] countArray;
 	private long[] hashA;
 	private long size;
-	long item,count;
-
-	private boolean isStart=true;
-//	public DateTime startTime;
-//	public DateTime endTime;
-
 
 	/*The data structure accepts two parameters epsilon and confidence, epsilon specifies
  	the error in estimation and confidence specifies the probability that the estimation is correct */
@@ -58,9 +49,7 @@ public class Count_Min implements Comparable<Count_Min>, Serializable {
 		initCountArray(depth, width, seed);
 	}
 
-
-
-	private Count_Min() {
+	public Count_Min() {
 
 	}
 
@@ -70,11 +59,9 @@ public class Count_Min implements Comparable<Count_Min>, Serializable {
 				", confidence=" + confidence +
 				", depth=" + depth +
 				", width=" + width +
-				", size=" + size +
+				", size=" + size+
 				'}';
 	}
-
-
 
 	public void toString2() {
 		for (int i = 0; i < depth; i++) {
@@ -85,11 +72,8 @@ public class Count_Min implements Comparable<Count_Min>, Serializable {
 		}
 	}
 
-	int hash(long item, int i) {
+	private int hash(long item, int i) {
 		long hash = hashA[i] * item;
-		// A super fast way of computing x mod 2^p-1
-		// See http://www.cs.princeton.edu/courses/archive/fall09/cos521/Handouts/universalclasses.pdf
-		// page 149, right after Proposition 7.
 		hash += hash >> 32;
 		hash &= PRIME_MODULUS;
 		// Doing "%" after (int) conversion is ~2x faster than %'ing longs.
@@ -194,64 +178,4 @@ public class Count_Min implements Comparable<Count_Min>, Serializable {
 		return Arrays.equals(hashA, that.hashA);
 	}
 
-
-
-	static Count_Min fromString(String line) {
-
-		String[] tokens = line.split(",");
-
-		Count_Min cm = new Count_Min();
-
-		try {
-			cm.item = Long.parseLong(tokens[0]);
-			cm.count = Long.parseLong(tokens[1]);
-
-
-		} catch (NumberFormatException nfe) {
-			throw new RuntimeException("Invalid record: " + line, nfe);
-		}
-
-		return cm;
-	}
-
-
-	//////////////////////????????????????????????????????????????????////////////////////////////
-
-	long getEventTime() {
-		return 1;
-//        if (isStart) {
-//            return 1;
-//        }
-//        else {
-//
-//            return 2;
-//        }
-	}
-
-
-
-
-	@Override
-	public int compareTo(Count_Min other) {
-		if (other == null) {
-			return 1;
-		}
-		int compareTimes = Long.compare(this.getEventTime(), other.getEventTime());
-		if (compareTimes == 0) {
-			if (this.isStart == other.isStart) {
-				return 0;
-			}
-			else {
-				if (this.isStart) {
-					return -1;
-				}
-				else {
-					return 1;
-				}
-			}
-		}
-		else {
-			return compareTimes;
-		}
-	}
 }
